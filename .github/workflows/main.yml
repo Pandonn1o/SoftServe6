@@ -37,8 +37,8 @@ jobs:
       - name: Check archives
         run: |
           $timestamp = Get-Date -Format "yyyy-MM-dd"
-$archivePath = "./archives/archive_$timestamp.zip"
-Compress-Archive -Path ./data/* -DestinationPath $archivePath
+          $archivePath = "./archives/archive_$timestamp.zip"
+          Compress-Archive -Path ./data/* -DestinationPath $archivePath
       - name: Check zip content
         run: |
           checkList=('2023-03/data_0' '2023-05/data_0')
