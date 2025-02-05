@@ -1,43 +1,35 @@
-import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-import { exec } from 'child_process';
-import { format } from 'date-fns';
+import { useState } from "react";
 
-const DATA_DIR = path.join(process.cwd(), 'data');
-const ARCHIVE_DIR = path.join(process.cwd(), 'archives');
+export default function ArchiveComponent() {
+  const [status, setStatus] = useState("");
 
-export async function POST() {
-  try {
-    // Ensure the archive directory exists
-    if (!fs.existsSync(ARCHIVE_DIR)) {
-      fs.mkdirSync(ARCHIVE_DIR);
-    }
-
-    // Generate timestamped archive directory name
-    const timestamp = format(new Date(), 'yyyy-MM-dd_HH-mm-ss');
-    const archiveDirName = `archive_${timestamp}`;
-    const archivePath = path.join(ARCHIVE_DIR, `${archiveDirName}.zip`);
-
-    // Create the zip archive command
-    const zipCommand = `cd ${DATA_DIR} && zip -r ${archivePath} .`;
-
-    // Execute the zip command
-    await new Promise((resolve, reject) => {
-      exec(zipCommand, (error, stdout, stderr) => {
-        if (error) {
-          console.error('Error creating archive:', stderr);
-          reject(error);
-        } else {
-          console.log('Archive created successfully:', stdout);
-          resolve(stdout);
-        }
+  const handleArchive = async () => {
+    setStatus("Archiving files...");
+    try {
+      const response = await fetch("/api/archive", {
+        method: "POST",
       });
-    });
 
-    return NextResponse.json({ message: 'Archive created successfully', archivePath });
-  } catch (error) {
-    console.error('Error archiving files:', error);
-    return NextResponse.json({ error: 'Failed to create archive' }, { status: 500 });
-  }
+      const result = await response.json();
+      if (response.ok) {
+        setStatus(result.message);
+      } else {
+        setStatus(`Error: ${result.message}`);
+      }
+    } catch (error) {
+      setStatus(`Request failed: ${error.message}`);
+    }
+  };
+
+  return (
+    <div className="p-4 bg-gray-100 rounded-lg">
+      <button
+        className="bg-blue-500 text-white p-2 rounded hover:bg-blue-700"
+        onClick={handleArchive}
+      >
+        Archive Files
+      </button>
+      {status && <p className="mt-4 text-gray-700">{status}</p>}
+    </div>
+  );
 }
