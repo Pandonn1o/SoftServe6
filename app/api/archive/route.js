@@ -24,6 +24,9 @@ export async function POST() {
     const archiveName = `archive_${formattedTimestamp}.zip`;
     const archivePath = path.join(archiveDir, archiveName);
 
+    // Log the archive path for debugging
+    console.log(`Archiving to: ${archivePath}`);
+
     // Windows-specific archive command using PowerShell
     const command = `powershell Compress-Archive -Path \"${dataDir}\\*\" -DestinationPath \"${archivePath}\"`;
 
