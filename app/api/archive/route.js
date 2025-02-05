@@ -1,4 +1,3 @@
-// app/api/archive/route.js
 import { exec } from "child_process";
 import path from "path";
 import fs from "fs";
@@ -14,12 +13,15 @@ export async function POST() {
       fs.mkdirSync(archiveDir);
     }
 
-    const timestamp = new Date()
-      .toISOString()
-      .replace(/T/, "_")
-      .replace(/:/g, "-")
-      .replace(/\..+/, "");
-    const archiveName = `archive_${timestamp}.zip`;
+    // Get the current date and time and format it as YYYY-MM-DD_HH
+    const timestamp = new Date();
+    const year = timestamp.getFullYear();
+    const month = String(timestamp.getMonth() + 1).padStart(2, "0");
+    const day = String(timestamp.getDate()).padStart(2, "0");
+    const hour = String(timestamp.getHours()).padStart(2, "0");
+    const formattedTimestamp = `${year}-${month}-${day}`;
+
+    const archiveName = `archive_${formattedTimestamp}.zip`;
     const archivePath = path.join(archiveDir, archiveName);
 
     // Windows-specific archive command using PowerShell
@@ -43,5 +45,5 @@ export async function POST() {
   } catch (err) {
     console.error("Error during file archiving:", err);
     return NextResponse.json({ success: false, message: "Internal Server Error" }, { status: 500 });
-  };
+  }
 }
