@@ -36,9 +36,8 @@ jobs:
         run: curl -X POST http://localhost:3000/api/archive
       - name: Check archives
         run: |
-          $timestamp = Get-Date -Format "yyyy-MM-dd"
-          $archivePath = "./archives/archive_$timestamp.zip"
-          Compress-Archive -Path ./data/* -DestinationPath $archivePath
+          sleep 1
+          ls -la ./archives/archive_$(date +%Y-%m-%d)*zip
       - name: Check zip content
         run: |
           checkList=('2023-03/data_0' '2023-05/data_0')

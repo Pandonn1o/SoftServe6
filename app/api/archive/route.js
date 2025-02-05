@@ -1,3 +1,4 @@
+// app/api/archive/route.js
 import { exec } from "child_process";
 import path from "path";
 import fs from "fs";
@@ -8,29 +9,20 @@ export async function POST() {
     const dataDir = path.join(process.cwd(), "data");
     const archiveDir = path.join(process.cwd(), "archives");
 
-    // Ensure the archive directory exists
     if (!fs.existsSync(archiveDir)) {
       fs.mkdirSync(archiveDir);
     }
 
-    // Get the current date and time and format it as YYYY-MM-DD_HH
-    const timestamp = new Date();
-    const year = timestamp.getFullYear();
-    const month = String(timestamp.getMonth() + 1).padStart(2, "0");
-    const day = String(timestamp.getDate()).padStart(2, "0");
-    const hour = String(timestamp.getHours()).padStart(2, "0");
-    const formattedTimestamp = `${year}-${month}-${day}`;
-
-    const archiveName = `archive_${formattedTimestamp}.zip`;
+    const timestamp = new Date()
+      .toISOString()
+      .replace(/T/, "_")
+      .replace(/:/g, "-")
+      .replace(/\..+/, "");
+    const archiveName = `archive_${timestamp}.zip`;
     const archivePath = path.join(archiveDir, archiveName);
-
-    // Log the archive path for debugging
-    console.log(`Archiving to: ${archivePath}`);
-
-    // Windows-specific archive command using PowerShell
+    
     const command = `powershell Compress-Archive -Path \"${dataDir}\\*\" -DestinationPath \"${archivePath}\"`;
 
-    // Execute the command
     exec(command, (error, stdout, stderr) => {
       if (error) {
         console.error(`Error during archiving: ${error.message}`);
