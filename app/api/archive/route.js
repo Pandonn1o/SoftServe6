@@ -14,13 +14,13 @@ export async function POST() {
       fs.mkdirSync(ARCHIVE_DIR);
     }
 
-    // Generate timestamped archive filename
-    const timestamp = format(new Date(), 'yyyy-MM-dd_HH');
-    const archivePath = path.join(ARCHIVE_DIR, `archive_${timestamp}.zip`);
+    // Generate timestamped archive directory name
+    const timestamp = format(new Date(), 'yyyy-MM-dd_HH-mm-ss');
+    const archiveDirName = `archive_${timestamp}`;
+    const archivePath = path.join(ARCHIVE_DIR, `${archiveDirName}.zip`);
 
     // Create the zip archive command
-    const zipCommand = `zip -r ${archivePath} ${DATA_DIR} 2>&1`;
-console.log(`Executing: ${zipCommand}`);
+    const zipCommand = `cd ${DATA_DIR} && zip -r ${archivePath} .`;
 
     // Execute the zip command
     await new Promise((resolve, reject) => {
