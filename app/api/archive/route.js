@@ -15,11 +15,12 @@ export async function POST() {
     }
 
     // Generate timestamped archive filename
-    const timestamp = format(new Date(), 'yyyy-MM-dd_HH-mm-ss');
+    const timestamp = format(new Date(), 'yyyy-MM-dd_HH');
     const archivePath = path.join(ARCHIVE_DIR, `archive_${timestamp}.zip`);
 
     // Create the zip archive command
-    const zipCommand = `zip -r ${archivePath} ${DATA_DIR}`;
+    const zipCommand = `zip -r ${archivePath} ${DATA_DIR} 2>&1`;
+console.log(`Executing: ${zipCommand}`);
 
     // Execute the zip command
     await new Promise((resolve, reject) => {
