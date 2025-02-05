@@ -22,8 +22,8 @@ export async function POST() {
     const archiveName = `archive_${timestamp}.zip`;
     const archivePath = path.join(archiveDir, archiveName);
 
-    // Archive command
-    const command = `zip -r "${archivePath}" "${dataDir}"`;
+    // Windows-specific archive command using PowerShell
+    const command = `powershell Compress-Archive -Path \"${dataDir}\\*\" -DestinationPath \"${archivePath}\"`;
 
     // Execute the command
     exec(command, (error, stdout, stderr) => {
@@ -43,5 +43,5 @@ export async function POST() {
   } catch (err) {
     console.error("Error during file archiving:", err);
     return NextResponse.json({ success: false, message: "Internal Server Error" }, { status: 500 });
-  }
+  };
 }
